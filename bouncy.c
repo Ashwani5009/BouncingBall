@@ -36,7 +36,6 @@ void FillCircle(SDL_Surface *surface, struct Circle circle, Uint32 color) {
 void step(struct Circle *circle) {
   circle->x += circle->x_v;
   circle->y += circle->y_v;
-  circle->y_v += A_GRAVITY;
 
   if (circle->y + circle->r > HEIGHT) {
     circle->y = HEIGHT - circle->r;
@@ -54,16 +53,18 @@ void step(struct Circle *circle) {
     circle->x = circle->r;
     circle->x_v = -circle->x_v;
   }
+
+  circle->y_v += A_GRAVITY;
 }
 
 int main() {
   SDL_Init(SDL_INIT_VIDEO);
-  SDL_Window *window =
-      SDL_CreateWindow("Bouncy Ball", SDL_WINDOWPOS_CENTERED,
-                       SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_BORDERLESS);
+  SDL_Window *window = SDL_CreateWindow("Bouncy Ball", SDL_WINDOWPOS_CENTERED,
+                                        SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT,
+                                        SDL_WINDOW_BORDERLESS);
 
   SDL_Surface *surface = SDL_GetWindowSurface(window);
-  struct Circle circle = {200, 200, 100,5,0};
+  struct Circle circle = {200, 200, 100, 5, 0};
   SDL_Rect rect = (SDL_Rect){0, 0, WIDTH, HEIGHT};
 
   int simulation_running = 1;
@@ -73,14 +74,15 @@ int main() {
       if (event.type == SDL_QUIT) {
         simulation_running = 0;
       }
-      if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){
+      if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE) {
         simulation_running = 0;
       }
     }
 
     SDL_FillRect(surface, &rect, COLOR_BACKGROUND);
     FillCircle(surface, circle, COLOR_WHITE);
-    step(&circle); SDL_UpdateWindowSurface(window);
+    step(&circle);
+    SDL_UpdateWindowSurface(window);
     SDL_Delay(10);
   }
 }
